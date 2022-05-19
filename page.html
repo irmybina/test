@@ -1,0 +1,189 @@
+<html>
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+  <title>Test</title>
+<style type="text/css">
+body {
+	font-family: 'Montserrat', sans-serif;
+	color: #101010;
+}
+div.brick {
+	margin-top: 30px;
+}
+.button_M {
+  background-color: rgba(51, 51, 51, 0.05);
+  border-radius: 8px;
+  border-width: 0;
+  color: #333333;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 10px 12px;
+  text-align: center;
+  transition: all 200ms;
+  vertical-align: baseline;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+</style>
+
+ </head>
+<body>
+
+<div class="container-fluid brick">
+<div class="row">
+<div class ="col"></div>
+<div class ="col-6">
+
+<div class = "brick">
+	<h3>TestTask</h3>
+	
+
+<div class="brick">
+<form>
+<label for="exampleFormControlTextarea1" class="form-label">input min and max</label>
+<div class="row">
+<div class ="col">
+<input id="variablez_1_input" class="form-control" type="text" placeholder="0" aria-label="default input example">
+</div>
+<div class ="col">
+<input id="variablez_2_input" class="form-control" type="text" placeholder="1000" aria-label="default input example">
+</div></div>
+</form> 
+<button id="variablez_1_button" class="button_M">input</button>
+</div>
+
+<div class="brick" id="variablez_1_output"></div>
+ 
+<script>
+function count1() {
+
+		/*Чтобы отсортировать курсы по цене, нужно сравнить введённые
+		пользователем минимум и максим с минимумами и максимумами цен на курсы.
+
+		Так минимум цен подходящего под запрос курса должен быть больше или равен
+		введённому пользователю минимуму, а максимум цены — меньше введённого максимума.
+
+		Если же данных о минимуме или максимуме цены нет, будем считать,
+		что диапазон цен этих позиций от нуля до известного числа или от известного числа
+		до бесконечности. В таком случае проверяется, лежит ли известная величина
+		в пользовательском диапазоне. При условии, что не извстен ни минимум, ни максимум, позиция считается подходящей.
+
+		Я разделила вывод на две категории: полностью подходящие курсы
+		(минимум и максимум цен на них известен, и лежит в диапазоне между пользовательскими мин/макс)
+		и курсы, которые могут подойти (курсы, цена которых частично попадает в пользовательский диапазон).
+		Внутри групп курсы отсортированы по возрастанию минимальной цены.*/
+		
+		let courses = [
+        { name: "Courses in England", prices: [0, 100] }, 
+        { name: "Courses in Germany", prices: [500, null] }, 
+        { name: "Courses in Italy", prices: [100, 200] }, 
+        { name: "Courses in Russia", prices: [null, 400] },
+        { name: "Courses in China", prices: [50, 250] },
+        { name: "Courses in USA", prices: [200, null] },
+        { name: "Courses in Kazakhstan", prices: [56, 324] },
+        { name: "Courses in France", prices: [null, null] },
+    ];
+		
+   		var customerMin = "";
+		customerMin += document.getElementById('variablez_1_input').value;
+		if (customerMin == null || customerMin<0 || customerMin == ''){
+			customerMin = 0;
+		}
+		var customerMax = "";
+		customerMax += document.getElementById('variablez_2_input').value;
+		if (customerMax == null || customerMax<0 || customerMax == ''){
+			customerMax = 1000;
+		}
+		
+		if (customerMax<customerMin){
+		customerMax = customerMin;
+		}
+		
+		let courseMin = 0;
+		let courseMax = 0;
+		let completeMatch = [];
+		let alsoMatch = [];
+		for (i=0; i<courses.length; i++){
+			courseMin = courses[i].prices[0];
+			courseMax = courses[i].prices[1];
+			if (courseMin!=null && courseMax!=null){
+				if (courseMin >= customerMin && courseMax <= customerMax){
+					completeMatch.push(courses[i]);
+				}
+				else if ((courseMin>=customerMin && courseMin<=customerMax)|| (courseMax>=customerMin && courseMax <= customerMax)){
+					alsoMatch.push(courses[i]);
+				}
+			}
+			else if (courseMin==null && courseMax!=null &&courseMax>=customerMin && courseMax<=customerMax){
+				alsoMatch.push(courses[i]);
+			}
+			else if (courseMax==null && courseMin!=null &&courseMin>=customerMin && courseMin<=customerMax){
+				alsoMatch.push(courses[i]);
+			}
+			else if (courseMin==null && courseMax==null){
+					alsoMatch.push(courses[i]);
+				}
+		}
+		
+		
+		var txt = "<h5>Complete Match:</h5></br>";
+		let temp_min=1000;
+		let temp_index = 0;
+		let cmLength = completeMatch.length;
+		for (i=0; i<cmLength; i++){
+			for (j=0; j<cmLength-i; j++){
+				if (completeMatch[j].prices[0]<temp_min){
+					temp_min = completeMatch[j].prices[0];
+					temp_index = j;
+				}
+			}
+			txt += completeMatch[temp_index].name + ".   Prices from " + completeMatch[temp_index].prices[0] + " to " + completeMatch[temp_index].prices[1] +"</br>";
+			completeMatch.splice(temp_index, 1);
+			temp_min = 1000;
+		}
+		
+		txt += "</br></br><h5>Might Be Interesting:</h5></br>";
+		
+		cmLength = alsoMatch.length;
+		for (i=0; i<cmLength; i++){
+			for (j=0; j<cmLength-i; j++){
+				if (alsoMatch[j].prices[0]<temp_min){
+					temp_min = alsoMatch[j].prices[0];
+					temp_index = j;
+				}
+			}
+			if (alsoMatch[temp_index].prices[0]!=null && alsoMatch[temp_index].prices[1]!=null){
+			txt += alsoMatch[temp_index].name + ".   Prices from " + alsoMatch[temp_index].prices[0] + " to " + alsoMatch[temp_index].prices[1] +"</br>";
+			}
+			else if (alsoMatch[temp_index].prices[0]!=null){
+			txt += alsoMatch[temp_index].name + ".   Prices from " + alsoMatch[temp_index].prices[0] +"</br>";
+			}
+			else if (alsoMatch[temp_index].prices[1]!=null){
+			txt += alsoMatch[temp_index].name + ".   Prices to " + alsoMatch[temp_index].prices[1] +"</br>";
+			}
+			else{
+			txt += alsoMatch[temp_index].name + ".   Prices unknown" + "</br>";
+			}
+			alsoMatch.splice(temp_index, 1);
+			temp_min = 1000;
+		}
+		
+ 
+    document.getElementById('variablez_1_output').innerHTML = txt;
+}
+ 
+document.getElementById('variablez_1_button').addEventListener('click', count1);
+</script>
+</div></div>
+<div class ="col"></div>
+</body>
+</html>
